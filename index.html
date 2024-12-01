@@ -50,8 +50,11 @@ https://www.ketchappgames.com/
 
         canvas {
             position: absolute;
+        }
+        #canvas {
             touch-action: none;
         }
+
         button {
             font-weight: 700;
 
@@ -226,11 +229,14 @@ https://www.ketchappgames.com/
             color: transparent;
             text-shadow: 0 0 0 rgb(100, 100, 100);
             pointer-events: none;
+            touch-action: none;
+            user-select: none;
 
             animation-duration: 0.1s;
             animation-fill-mode: both;
 
             font-size: calc(3 * var(--w));
+
         }
     </style>
 </head>
