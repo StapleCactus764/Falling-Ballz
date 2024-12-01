@@ -1841,9 +1841,9 @@ const tutorial = {
         if (!this.show) this.opacity = Math.max(this.opacity - 0.15, 0);
 
         const styles = window.getComputedStyle(this.hand).display;
-        if (game.scene === 'shop' && styles === 'block')
+        if ((game.scene === 'shop' || game.paused) && styles === 'block')
             hand.style.display = 'none';
-        if (game.scene === 'game' && styles === 'none')
+        if (game.scene === 'game' && !game.paused && styles === 'none')
             hand.style.display = 'block';
 
         ctx.lineWidth = 0.3;
