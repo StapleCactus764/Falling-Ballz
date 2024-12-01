@@ -355,7 +355,6 @@ const setMouse = e => {
         if (mangle < 0 && mangle >= -Math.PI / 2) mangle = 0;
         if (mangle < -Math.PI / 2) mangle = Math.PI;
     }
-    console.log('hi');
 };
 canvas.onclick = e => {
     clicked = true;
@@ -1883,9 +1882,9 @@ const tutorial = {
         ctx.closePath();
         ctx.fill();
 
-        this.hand.style.left = (wWidth - width) / 2 +
+        this.hand.style.left = wLeft +
             ((handx / window.devicePixelRatio - 1.5) * scalex) + 'px';
-        this.hand.style.top = (wHeight - height) / 2 + 75 * scaley / window.devicePixelRatio + 'px';
+        this.hand.style.top = wTop + 75 * scaley / window.devicePixelRatio + 'px';
     },
 };
 
