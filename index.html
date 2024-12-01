@@ -552,7 +552,7 @@ const game = {
 
         ctx.lineCap = 'butt';
 
-        if (clicked && hovering) {
+        if (clicked && hovering && game.scene === 'game') {
             this.paused = true;
             this.pauseEl.style.display = 'flex';
             this.pauseEl.style.animationName = 'fade-in';
@@ -898,7 +898,7 @@ class Ball {
     }
     static run() {
         // When to start firing
-        if (clicked && Ball.ready &&
+        if (clicked && Ball.ready && game.scene === 'game' &&
             mx > l.margin && mx < 100 - l.margin &&
             my > l.top && my < l.bottom) {
                 Ball.firing = true;
