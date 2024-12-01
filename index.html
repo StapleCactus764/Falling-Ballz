@@ -4,6 +4,11 @@ Falling Ballz
 Started: 11/22/24
 Finished: 12/1/24
 
+About:
+This is a recreation of the game Falling Ballz by Ketchapp,
+created in just over one week.
+https://www.ketchappgames.com/
+
 -->
 <html lang="en">
 <head>
@@ -20,7 +25,7 @@ Finished: 12/1/24
         body {
             margin: 0;
             background-color: var(--background);
-            /* overflow: hidden; */
+            overflow: hidden;
         }
         * {
             font-family: 'Comfortaa', sans-serif;
@@ -45,8 +50,6 @@ Finished: 12/1/24
 
         canvas {
             position: absolute;
-            /* outline-color: var(--bright);
-            outline-style: solid; */
             touch-action: none;
         }
         button {
@@ -368,18 +371,6 @@ canvas.onpointerup = e => {
     setMouse(e);
 };
 
-// canvas.onmousedown = setMouse;
-// canvas.onmousemove = setMouse;
-// canvas.addEventListener('touchstart', setMouse);
-// canvas.addEventListener('touchend', e => {
-//     clicked = true;
-//     setMouse(e);
-// });
-// canvas.addEventListener('touchmove', setMouse)
-
-
-
-
 const game = {
     scene: 'game',
     inPlay: false,
@@ -477,7 +468,6 @@ const game = {
         });
         
         this.paused = false;
-
         this.scene = 'shop';
     },
 
@@ -533,11 +523,8 @@ const game = {
         const hovering = mx > x - 3 && mx < x + 3 &&
         my > y - 4 && my < y + 4;
 
-        if (hovering) {
-            this.pbb = Math.min(this.pbb + 0.15, 2.5);
-        } else {
-            this.pbb = Math.max(this.pbb - 0.15, 1.7);
-        }
+        if (hovering) this.pbb = Math.min(this.pbb + 0.15, 2.5);
+        else this.pbb = Math.max(this.pbb - 0.15, 1.7);
 
         ctx.lineWidth = 1;
         ctx.lineCap = 'round';
@@ -609,7 +596,6 @@ const shop = {
         document.body.style.backgroundColor = palette.dark;
 
         ctx.fillStyle = palette.dark;
-        //`rgba(${paletteArr.dark.join(', ')}, ${this.opacity})`;
         ctx.fillRect(0, 0, pWidth, pHeight);
 
         ctx.globalAlpha = this.opacity;
@@ -707,7 +693,7 @@ const shop = {
                         localStorage.setItem('ballz-selected', i);
                     }
                 }
-            } else {
+            } else { // Not bought and not selected
                 ctx.beginPath();
                 ctx.moveTo(45, y);
                 ctx.lineTo(55, y);
@@ -836,6 +822,7 @@ class Ball {
             ctx.closePath();
             ctx.fill();
         }
+
         // Grows white circle at end of turn
         if (!game.inPlay && !Ball.ready) {
             Ball.ft = Ball.rate;
@@ -872,11 +859,8 @@ class Ball {
 
             const x = i + offset;
             let r;
-            if (x < 0.5) {
-                r = x * 1.2;
-            } else {
-                r = 0.6 - (x - 0.5) * 0.021
-            }
+            if (x < 0.5) r = x * 1.2;
+            else r = 0.6 - (x - 0.5) * 0.021
 
             if (x > 15) ctx.fillStyle = `rgba(${paletteArr.bright.join(',')}, ${16 - x})`;
             
@@ -1305,11 +1289,6 @@ class Bumper {
     static create() {
         let num = Math.random() < 0.8 ? 2 : Math.random() < 0.5 ? 1 : 3;
 
-        // console.log(Math.max(
-        //         0.125 - (game.score > 30 ? (game.score - 30) * 0.005 : 0),
-        //         0.05
-        //     ));
-
         let i;
         for (i = 0; i < num; i ++) {
             const ammoChance = Math.max(
@@ -1353,10 +1332,9 @@ class Bumper {
         this.x = this.tx = x;
         this.y = this.ty = l.bottom + Bumper.r - Bumper.rowHeight * this.row;
 
-        const rand = Math.floor(0.2 + 18 * Math.pow(Math.random() - 0.45, 3.8)); //2.6
+        const rand = Math.floor(0.2 + 18 * Math.pow(Math.random() - 0.45, 3.8));
         this.hits = Math.max(1, Bumper.maxHit + (rand || 0));
 
-        // && Math.random() < 0.5
         this.sides = rand === 2 || (rand === 1 && Math.random() < 0.7) ? 3 + Math.random() * 2 | 0 : null;
         this.spinDir = Math.random() < 0.5 ? 1 : -1;
     }
@@ -1410,6 +1388,7 @@ class Bumper {
         const growth = game.inPlay && !game.over ? 0.25 * Math.sqrt((this.x - this.tx) ** 2 +
                 (this.y - this.ty) ** 2) : 0,
             r = Bumper.r + growth;
+        
         ctx.fillStyle = `hsl(${21 + 12 * this.hits} ${70} ${62 * (colOffset)})`;
         ctx.beginPath();
         if (this.sides === null) {
@@ -1432,9 +1411,7 @@ class Bumper {
                 this.x + Math.random() * 0.5 - 0.25,
                 this.y + 0.5 + Math.random() * 0.5 - 0.25,
             );
-        } else {
-            ctx.fillText(this.hits, this.x, this.y + 0.5);
-        }
+        } else ctx.fillText(this.hits, this.x, this.y + 0.5);
     }
     particles() {
         particles.push(new BumperParticle(this.x, this.y));
@@ -1526,12 +1503,6 @@ class Coin extends Bumper {
         ctx.translate(x, y);
         ctx.scale(size, size);
         ctx.rotate(angle);
-
-        // ctx.fillStyle = palette.bright;
-        // ctx.beginPath();
-        // ctx.arc(0, 0, Bumper.r, 0, Math.PI * 2);
-        // ctx.closePath();
-        // ctx.fill();
 
         // In shadow
         ctx.fillStyle = palette.coinShadow;
@@ -1639,6 +1610,7 @@ class BumperParticle {
 
         this.age += dt * 1.5;
 
+        // Lines move out
         for (const line of this.lines) {
             line.x += line.vx;
             line.y += line.vy;
@@ -1667,6 +1639,7 @@ class BumperParticle {
         ctx.closePath();
         ctx.stroke();
 
+        // Lines fade out after some time
         ctx.lineCap = 'round';
         ctx.strokeStyle = `rgba(${paletteArr.bright.join(',')}, ${
             this.age < BumperParticle.life * 2 / 3 ? 1 : (BumperParticle.life - this.age) / 2
@@ -1701,6 +1674,7 @@ class NumberParticle {
         this.y -= 0.2;
         this.angle = Math.sin(this.age / 3) * 0.2;
 
+        // Shrink after some time
         this.scale = this.age < NumberParticle.lifetime - NumberParticle.shrink ? 1 :
             1 - (this.age - (NumberParticle.lifetime - NumberParticle.shrink)) / NumberParticle.shrink;
 
@@ -1846,10 +1820,8 @@ class Shake {
         this.age += dt * substeps;
         
         const [x, y] = Shake.getOffset(this.age);
-
-        if (this.age > this.os * 3 / 2) {
-            this.strength *= 0.5;
-        }
+        if (this.age > this.os * 3 / 2) this.strength *= 0.5;
+        
         ctx.translate(
             this.strength * x,
             this.strength * y,
@@ -1959,7 +1931,6 @@ const loop = t => {
     if (game.scene === 'shop') shop.display();
     else shop.opacity = Math.max(shop.opacity - 0.1, 0);
 
-
     ctx.restore();
 
     clicked = false;
@@ -1968,9 +1939,7 @@ const loop = t => {
 };
 window.requestAnimationFrame(loop);
 
-
     </script>
-
     <script>
 
 const logoCanvas = document.getElementById('logo'),
@@ -2208,8 +2177,6 @@ lctx.moveTo(235, 180);
 lctx.lineTo(286, 180);
 lctx.stroke();
 lctx.closePath();
-
-
 
     </script>
 </body>
