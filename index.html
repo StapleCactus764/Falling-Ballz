@@ -1890,7 +1890,7 @@ const tutorial = {
         ctx.fill();
 
         this.hand.style.left = wLeft +
-            ((handx / window.devicePixelRatio - 1.5) * scalex) + 'px';
+            ((handx - 1.5) / window.devicePixelRatio * scalex) + 'px';
         this.hand.style.top = wTop + 75 * scaley / window.devicePixelRatio + 'px';
     },
 };
