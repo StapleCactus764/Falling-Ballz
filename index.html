@@ -3,10 +3,6 @@
 Falling Ballz
 Started: 11/22/24
 
-Todo
- - Death
- - Tutorial dialogue
-
 -->
 <html lang="en">
 <head>
@@ -23,6 +19,7 @@ Todo
         body {
             margin: 0;
             background-color: var(--background);
+            /* overflow: hidden; */
         }
         * {
             font-family: 'Comfortaa', sans-serif;
@@ -49,6 +46,7 @@ Todo
             position: absolute;
             /* outline-color: var(--bright);
             outline-style: solid; */
+            touch-action: none;
         }
         button {
             font-weight: 700;
@@ -227,6 +225,8 @@ Todo
 
             animation-duration: 0.1s;
             animation-fill-mode: both;
+
+            font-size: calc(3 * var(--w));
         }
     </style>
 </head>
@@ -306,10 +306,10 @@ const l = { // Layout
 };
 
 const bumperText = document.getElementById('bumper-text');
-let wWidth, wHeight, width, height, scalex, scaley;
+let wWidth, wHeight, width, height, scalex, scaley, wLeft, wTop;
 const setSize = () => {
-    wWidth = window.innerWidth;
-    wHeight = window.innerHeight;
+    wWidth = window.innerWidth * window.devicePixelRatio
+    wHeight = window.innerHeight * window.devicePixelRatio
 
     width = wHeight * aspectRatio;
     height = wHeight;
@@ -323,10 +323,17 @@ const setSize = () => {
     scaley = height / pHeight;
     document.documentElement.style.setProperty('--scale', (scalex + scaley) / 2);
 
+    const inverse = 1 / window.devicePixelRatio;
+    wLeft = (wWidth - width) / 2 * inverse;
+    wTop = (wHeight - height) / 2 * inverse;
+
     canvas.width = width;
     canvas.height = height;
-    canvas.style.left = (wWidth - width) / 2 + 'px';
-    canvas.style.top = (wHeight - height) / 2 + 'px';
+    canvas.style.left = wLeft + 'px';
+    canvas.style.top = wTop + 'px';
+
+    canvas.style.transformOrigin = 'top left';
+    canvas.style.transform = `scale(${inverse})`;
 
     document.documentElement.style.setProperty('--w', width / 100 + 'px');
 };
@@ -338,27 +345,37 @@ let clicked = false,
     mouseDown = false,
     mx = 0, my = 0, mangle = Math.PI / 2;
 const setMouse = e => {
-    mx = (e.offsetX || (e.changedTouches?.[0]?.clientX - (wWidth - width) / 2)) / scalex;
-    my = (e.offsetY || (e.changedTouches?.[0]?.clientY - (wHeight - height) / 2)) / scaley;
+    let t;
+    if (e.touches) t= e.touches.length === 0 ? e.changedTouches : e.touches;
+    mx = (e.offsetX || (t[0].clientX - wLeft) * window.devicePixelRatio) / scalex;
+    my = (e.offsetY || (t[0].clientY - wTop) * window.devicePixelRatio) / scaley;
 
     if (!game.inPlay) {
         mangle = Math.atan2(my - l.top, mx - 50);
         if (mangle < 0 && mangle >= -Math.PI / 2) mangle = 0;
         if (mangle < -Math.PI / 2) mangle = Math.PI;
     }
+    console.log('hi');
 };
 canvas.onclick = e => {
     clicked = true;
     setMouse(e);
-}
-canvas.onmousedown = setMouse;
-canvas.onmousemove = setMouse;
-canvas.addEventListener('touchstart', setMouse);
-canvas.addEventListener('touchend', e => {
+};
+canvas.onpointerdown = setMouse;
+canvas.onpointermove = setMouse;
+canvas.onpointerup = e => {
     clicked = true;
     setMouse(e);
-});
-canvas.addEventListener('touchmove', setMouse)
+};
+
+// canvas.onmousedown = setMouse;
+// canvas.onmousemove = setMouse;
+// canvas.addEventListener('touchstart', setMouse);
+// canvas.addEventListener('touchend', e => {
+//     clicked = true;
+//     setMouse(e);
+// });
+// canvas.addEventListener('touchmove', setMouse)
 
 
 
@@ -1866,8 +1883,9 @@ const tutorial = {
         ctx.closePath();
         ctx.fill();
 
-        this.hand.style.left = (wWidth - width) / 2 + handx * scalex - 8.5 + 'px';
-        this.hand.style.top = (wHeight - height) / 2 + 75 * scaley + 'px';
+        this.hand.style.left = (wWidth - width) / 2 +
+            ((handx / window.devicePixelRatio - 1.5) * scalex) + 'px';
+        this.hand.style.top = (wHeight - height) / 2 + 75 * scaley / window.devicePixelRatio + 'px';
     },
 };
 
@@ -2184,8 +2202,6 @@ lctx.moveTo(235, 180);
 lctx.lineTo(286, 180);
 lctx.stroke();
 lctx.closePath();
-
-
 
     </script>
 </body>
