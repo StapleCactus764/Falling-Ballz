@@ -2,6 +2,7 @@
 <!-- 
 Falling Ballz
 Started: 11/22/24
+Finished: 12/1/24
 
 -->
 <html lang="en">
@@ -335,7 +336,7 @@ const setSize = () => {
     canvas.style.transformOrigin = 'top left';
     canvas.style.transform = `scale(${inverse})`;
 
-    document.documentElement.style.setProperty('--w', width / 100 + 'px');
+    document.documentElement.style.setProperty('--w', width / 100 / window.devicePixelRatio + 'px');
 };
 
 
@@ -1866,6 +1867,12 @@ const tutorial = {
     hand: document.getElementById('hand'),
     display() {
         if (!this.show) this.opacity = Math.max(this.opacity - 0.15, 0);
+
+        const styles = window.getComputedStyle(this.hand).display;
+        if (game.scene === 'shop' && styles === 'block')
+            hand.style.display = 'none';
+        if (game.scene === 'game' && styles === 'none')
+            hand.style.display = 'block';
 
         ctx.lineWidth = 0.3;
         ctx.strokeStyle = ctx.fillStyle = `rgb(100, 100, 100, ${this.opacity})`;
