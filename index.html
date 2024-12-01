@@ -321,7 +321,7 @@ const setSize = () => {
 
     scalex = width / pWidth;
     scaley = height / pHeight;
-    document.documentElement.style.setProperty('--scale', (scalex + scaley) / 2);
+    document.documentElement.style.setProperty('--scale', (scalex + scaley) / 2 / window.devicePixelRatio);
 
     const inverse = 1 / window.devicePixelRatio;
     wLeft = (wWidth - width) / 2 * inverse;
@@ -2201,6 +2201,8 @@ lctx.moveTo(235, 180);
 lctx.lineTo(286, 180);
 lctx.stroke();
 lctx.closePath();
+
+
 
     </script>
 </body>
